@@ -26,132 +26,143 @@ import com.rabo.tppapi.testutils.TestUtils;
 @RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)
 public class PaymentInitiationRequestValidatorTest {
-	
+
 	@InjectMocks
 	PaymentInitiationRequestValidator requestValidator;
-	
+
 	X509Certificate certificate;
-	
+
 	String encodedSignature;
-	
+
 	String encodedCertificate;
-	
+
 	PaymentInitiationRequest request;
-	
+
 	private final ObjectMapper mapper = new ObjectMapper();
-	
+
 	@Test(expected = Test.None.class)
-	public void givenValidRequest_WhenMethodIsCalled_ThenNoExceptionIsThrown() throws CertificateException, IOException{
-		
+	public void givenValidRequest_WhenMethodIsCalled_ThenNoExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForSuccesfulResponse();
-		
+
 		requestValidator.validateRequest(certificate, encodedSignature.trim(), request);
 	}
-	
-	@Test(expected=InvalidRequestException.class)
-	public void givenNoCertificate_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown() throws CertificateException, IOException{
-		
+
+	@Test(expected = InvalidRequestException.class)
+	public void givenNoCertificate_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForWithNoCertificate();
-		
+
 		requestValidator.validateRequest(certificate, encodedSignature.trim(), request);
 	}
-	
-	@Test(expected=InvalidRequestException.class)
-	public void givenNoSignature_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown() throws CertificateException, IOException{
-		
+
+	@Test(expected = InvalidRequestException.class)
+	public void givenNoSignature_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForWithNoSignature();
-		
+
 		requestValidator.validateRequest(certificate, encodedSignature, request);
 	}
-	
-	@Test(expected=InvalidRequestException.class)
-	public void givenNoRequestbody_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown() throws CertificateException, IOException{
-		
+
+	@Test(expected = InvalidRequestException.class)
+	public void givenNoRequestbody_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForWithNoRequestBody();
-		
+
 		requestValidator.validateRequest(certificate, encodedSignature.trim(), request);
 	}
-	
+
 	@Test(expected = Test.None.class)
-	public void givenProperCertificate_WhenMethodIsCalled_ThenNoExceptionIsThrown() throws CertificateException, IOException{
-		
+	public void givenProperCertificate_WhenMethodIsCalled_ThenNoExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForWithProperCertificate();
-		
+
 		requestValidator.validateCertificate(certificate);
 	}
-	
+
 	@Test(expected = UnknownCertificateException.class)
-	public void givenInCorrectCNCertificate_WhenMethodIsCalled_ThenUnknownCertificateExceptionIsThrown() throws CertificateException, IOException{
-		
+	public void givenInCorrectCNCertificate_WhenMethodIsCalled_ThenUnknownCertificateExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForWithInCorrectCNCertificate();
-		
+
 		requestValidator.validateCertificate(certificate);
 	}
-	
+
 	@Test(expected = Test.None.class)
-	public void givenProperSignature_WhenMethodIsCalled_ThenNoExceptionIsThrown() throws CertificateException, IOException{
-		
+	public void givenProperSignature_WhenMethodIsCalled_ThenNoExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForSuccesfulResponse();
-		
+
 		requestValidator.validateSignature(certificate, encodedSignature.trim(), request);
 	}
-	
+
 	@Test(expected = InvalidSignatureException.class)
-	public void givenDifferentKeySignedSignature_WhenMethodIsCalled_ThenInvalidSignatureExceptionIsThrown() throws CertificateException, IOException{
-		
+	public void givenDifferentKeySignedSignature_WhenMethodIsCalled_ThenInvalidSignatureExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForDifferentKeySignedSignature();
-		
+
 		requestValidator.validateSignature(certificate, encodedSignature.trim(), request);
 	}
-	
+
 	@Test(expected = Test.None.class)
-	public void givenProperRequestBody_WhenMethodIsCalled_ThenNoExceptionIsThrown() throws CertificateException, IOException{
-		
+	public void givenProperRequestBody_WhenMethodIsCalled_ThenNoExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForProperRequestBody();
-		
+
 		requestValidator.validateAmountLimit(request);
 	}
-	
+
 	@Test(expected = LimitExceededException.class)
-	public void givenLimitAmoutExceededRequestBody_WhenMethodIsCalled_ThenLimitExceededExceptionIsThrown() throws CertificateException, IOException{
-		
+	public void givenLimitAmoutExceededRequestBody_WhenMethodIsCalled_ThenLimitExceededExceptionIsThrown()
+			throws CertificateException, IOException {
+
 		perpareDataForLimitExceededExceptionRequestBody();
-		
+
 		requestValidator.validateAmountLimit(request);
 	}
-	private void perpareDataForSuccesfulResponse() throws IOException, CertificateException{
-		
-		String certFilePath = "classpath:ValidCertificate.txt"; 
-    	String signFilePath = "classpath:ValidRequestSignature.txt"; 
-    	encodedCertificate =  TestUtils.readCertificate(certFilePath);
-    	encodedSignature = TestUtils.readSignature(signFilePath);
+
+	private void perpareDataForSuccesfulResponse() throws IOException, CertificateException {
+
+		String certFilePath = "classpath:ValidCertificate.txt";
+		String signFilePath = "classpath:ValidRequestSignature.txt";
+		encodedCertificate = TestUtils.readCertificate(certFilePath);
+		encodedSignature = TestUtils.readSignature(signFilePath);
 		request = mapper.readValue(TestUtils.readFile("test-valid-request.json"), PaymentInitiationRequest.class);
 		CertificateFactory certFactory = CertificateFactory.getInstance(ApplicationConstant.CERTIFICATETYPE);
 		byte[] originalcert = Base64.getDecoder().decode(encodedCertificate.trim());
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
 		certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 	}
-	
-    private void perpareDataForWithNoCertificate() throws IOException, CertificateException{
-		String signFilePath = "classpath:ValidRequestSignature.txt"; 
-    	encodedSignature = TestUtils.readSignature(signFilePath);
+
+	private void perpareDataForWithNoCertificate() throws IOException, CertificateException {
+		String signFilePath = "classpath:ValidRequestSignature.txt";
+		encodedSignature = TestUtils.readSignature(signFilePath);
 		request = mapper.readValue(TestUtils.readFile("test-valid-request.json"), PaymentInitiationRequest.class);
 		certificate = null;
 	}
-    
-   private void perpareDataForWithNoSignature() throws IOException, CertificateException{
-		
-		String certFilePath = "classpath:ValidCertificate.txt"; 
-    	encodedCertificate =  TestUtils.readCertificate(certFilePath);
+
+	private void perpareDataForWithNoSignature() throws IOException, CertificateException {
+
+		String certFilePath = "classpath:ValidCertificate.txt";
+		encodedCertificate = TestUtils.readCertificate(certFilePath);
 		request = mapper.readValue(TestUtils.readFile("test-valid-request.json"), PaymentInitiationRequest.class);
 		CertificateFactory certFactory = CertificateFactory.getInstance(ApplicationConstant.CERTIFICATETYPE);
 		byte[] originalcert = Base64.getDecoder().decode(encodedCertificate.trim());
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
 		certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 	}
-   
-   private void perpareDataForWithNoRequestBody() throws IOException, CertificateException{
-		
+
+	private void perpareDataForWithNoRequestBody() throws IOException, CertificateException {
+
 		String certFilePath = "classpath:ValidCertificate.txt";
 		String signFilePath = "classpath:ValidRequestSignature.txt";
 		encodedCertificate = TestUtils.readCertificate(certFilePath);
@@ -162,9 +173,9 @@ public class PaymentInitiationRequestValidatorTest {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
 		certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 	}
-   
-   private void perpareDataForWithProperCertificate() throws IOException, CertificateException{
-		
+
+	private void perpareDataForWithProperCertificate() throws IOException, CertificateException {
+
 		String certFilePath = "classpath:ValidCertificate.txt";
 		encodedCertificate = TestUtils.readCertificate(certFilePath);
 		CertificateFactory certFactory = CertificateFactory.getInstance(ApplicationConstant.CERTIFICATETYPE);
@@ -172,9 +183,9 @@ public class PaymentInitiationRequestValidatorTest {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
 		certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 	}
-   
-   private void perpareDataForWithInCorrectCNCertificate() throws IOException, CertificateException{
-		
+
+	private void perpareDataForWithInCorrectCNCertificate() throws IOException, CertificateException {
+
 		String certFilePath = "classpath:IncorrectCNnameCertificate.txt";
 		encodedCertificate = TestUtils.readCertificate(certFilePath);
 		CertificateFactory certFactory = CertificateFactory.getInstance(ApplicationConstant.CERTIFICATETYPE);
@@ -182,9 +193,9 @@ public class PaymentInitiationRequestValidatorTest {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
 		certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 	}
-   
-   private void perpareDataForDifferentKeySignedSignature() throws IOException, CertificateException{
-		
+
+	private void perpareDataForDifferentKeySignedSignature() throws IOException, CertificateException {
+
 		String certFilePath = "classpath:ValidCertificate.txt";
 		String signFilePath = "classpath:DifferentKeySignedRequestSignature.txt";
 		encodedCertificate = TestUtils.readCertificate(certFilePath);
@@ -195,16 +206,15 @@ public class PaymentInitiationRequestValidatorTest {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
 		certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 	}
-   
-   private void perpareDataForProperRequestBody() throws IOException, CertificateException{
-		
+
+	private void perpareDataForProperRequestBody() throws IOException, CertificateException {
+
 		request = mapper.readValue(TestUtils.readFile("test-valid-request.json"), PaymentInitiationRequest.class);
 	}
-   
-   private void perpareDataForLimitExceededExceptionRequestBody() throws IOException, CertificateException{
-		
+
+	private void perpareDataForLimitExceededExceptionRequestBody() throws IOException, CertificateException {
+
 		request = mapper.readValue(TestUtils.readFile("test-amountlimit-request.json"), PaymentInitiationRequest.class);
 	}
-   
 
 }
