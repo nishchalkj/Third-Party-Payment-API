@@ -86,6 +86,13 @@ This application exposes below end point url
     "reasonCode": "500",
     "timeStamp": "2021-04-15T17:27:44.686"
     } 
+    
+    {
+    "status": "Rejected",
+    "reason": "Invalid_Request",
+    "reasonCode": "500",
+    "timeStamp": "2021-04-16T01:03:02.342"
+     }
                    
 
 
