@@ -3,7 +3,7 @@ Third Party Payment processor project
 
 ## Introduction
 
-At Rabobank, we are opening up payment initiation API for third party
+We are opening up payment initiation API for third party
 payment providers (TPPs). For testing purpose, we also provide a
 sandbox environment to TPPs. The API definition is provided by the
 Open API format (see [api-definition.yaml](./api-definition.yaml).
