@@ -7,6 +7,7 @@ import java.security.Signature;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -48,7 +49,8 @@ public class PaymentInitiationRequestValidator {
 	 */
 	public void validateRequest(X509Certificate cert, String signature, PaymentInitiationRequest request) {
 
-		if (null == cert || null == signature || null == request) {
+		if (null == request || StringUtils.isBlank(request.getDebtorIBAN()) || !StringUtils.isAlphanumeric(request.getDebtorIBAN())
+				|| StringUtils.isBlank(request.getCreditorIBAN()) || !StringUtils.isAlphanumeric(request.getCreditorIBAN())) {
 			throw new InvalidRequestException(ApplicationConstant.INVALID_REQUEST, 500);
 		}
 		validateCertificate(cert);

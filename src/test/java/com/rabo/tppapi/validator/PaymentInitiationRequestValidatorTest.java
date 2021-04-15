@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabo.tppapi.constants.ApplicationConstant;
+import com.rabo.tppapi.exception.GenericException;
 import com.rabo.tppapi.exception.InvalidRequestException;
 import com.rabo.tppapi.exception.InvalidSignatureException;
 import com.rabo.tppapi.exception.LimitExceededException;
@@ -49,7 +50,7 @@ public class PaymentInitiationRequestValidatorTest {
 		requestValidator.validateRequest(certificate, encodedSignature.trim(), request);
 	}
 
-	@Test(expected = InvalidRequestException.class)
+	@Test(expected = GenericException.class)
 	public void givenNoCertificate_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown()
 			throws CertificateException, IOException {
 
@@ -58,7 +59,7 @@ public class PaymentInitiationRequestValidatorTest {
 		requestValidator.validateRequest(certificate, encodedSignature.trim(), request);
 	}
 
-	@Test(expected = InvalidRequestException.class)
+	@Test(expected = GenericException.class)
 	public void givenNoSignature_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown()
 			throws CertificateException, IOException {
 
@@ -72,6 +73,15 @@ public class PaymentInitiationRequestValidatorTest {
 			throws CertificateException, IOException {
 
 		perpareDataForWithNoRequestBody();
+
+		requestValidator.validateRequest(certificate, encodedSignature.trim(), request);
+	}
+	
+	@Test(expected = InvalidRequestException.class)
+	public void givenInvalidIBAN_WhenMethodIsCalled_ThenInvalidRequestExceptionIsThrown()
+			throws CertificateException, IOException {
+
+		perpareDataForInvalidIBAN();
 
 		requestValidator.validateRequest(certificate, encodedSignature.trim(), request);
 	}
@@ -168,6 +178,19 @@ public class PaymentInitiationRequestValidatorTest {
 		encodedCertificate = TestUtils.readCertificate(certFilePath);
 		encodedSignature = TestUtils.readSignature(signFilePath);
 		request = null;
+		CertificateFactory certFactory = CertificateFactory.getInstance(ApplicationConstant.CERTIFICATETYPE);
+		byte[] originalcert = Base64.getDecoder().decode(encodedCertificate.trim());
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
+		certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
+	}
+	
+	private void perpareDataForInvalidIBAN() throws IOException, CertificateException {
+
+		String certFilePath = "classpath:ValidCertificate.txt";
+		String signFilePath = "classpath:ValidRequestSignature.txt";
+		encodedCertificate = TestUtils.readCertificate(certFilePath);
+		encodedSignature = TestUtils.readSignature(signFilePath);
+		request = mapper.readValue(TestUtils.readFile("test-invalidIban-request.json"), PaymentInitiationRequest.class);;
 		CertificateFactory certFactory = CertificateFactory.getInstance(ApplicationConstant.CERTIFICATETYPE);
 		byte[] originalcert = Base64.getDecoder().decode(encodedCertificate.trim());
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
