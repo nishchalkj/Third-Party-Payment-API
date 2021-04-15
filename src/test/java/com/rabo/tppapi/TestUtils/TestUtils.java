@@ -1,4 +1,4 @@
-package com.rabo.tppapi.TestUtils;
+package com.rabo.tppapi.testutils;
 
 import java.io.File;
 import java.io.FileInputStream;

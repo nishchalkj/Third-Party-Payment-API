@@ -19,9 +19,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabo.tppapi.TppapiApplication;
-import com.rabo.tppapi.TestUtils.TestUtils;
 import com.rabo.tppapi.model.PaymentInitiationRequest;
 import com.rabo.tppapi.model.PaymentInitiationResponse;
+import com.rabo.tppapi.testutils.TestUtils;
 
 
 @RunWith(SpringRunner.class)

@@ -16,11 +16,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabo.tppapi.TestUtils.TestUtils;
 import com.rabo.tppapi.exception.GenericException;
 import com.rabo.tppapi.model.PaymentInitiationRequest;
 import com.rabo.tppapi.model.PaymentInitiationResponse;
 import com.rabo.tppapi.model.PaymentInitiationResponseOverview;
+import com.rabo.tppapi.testutils.TestUtils;
 import com.rabo.tppapi.validator.PaymentInitiationRequestValidator;
 
 @RunWith(MockitoJUnitRunner.class)
