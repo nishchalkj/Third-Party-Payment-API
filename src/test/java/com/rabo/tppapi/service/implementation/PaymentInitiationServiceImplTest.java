@@ -3,7 +3,6 @@ package com.rabo.tppapi.service.implementation;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.security.cert.X509Certificate;
 
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

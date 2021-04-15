@@ -61,22 +61,24 @@ public class PaymentInitiationServiceImpl implements PaymentInitiationService {
 			PaymentInitiationRequest request) {
 
 		PaymentInitiationResponseOverview responseOverview = new PaymentInitiationResponseOverview();
+		X509Certificate certificate;
 		try {
 			CertificateFactory certFactory = CertificateFactory.getInstance(ApplicationConstant.CERTIFICATETYPE);
 			byte[] originalcert = Base64.getDecoder().decode(endodedCertificate);
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
-			X509Certificate certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
-			validator.validateRequest(certificate, signature, request);
-			String paymentId = generatePaymentId();
-			response.setPaymentId(paymentId);
-			response.setStatus(ApplicationConstant.ACCEPTED);
-			responseOverview.setResponseSignature(generateSignature(response));
-			responseOverview.setCertificate(endodedCertificate);
-			responseOverview.setResponse(response);
+			certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 		} catch (Exception ex) {
 			log.error("Exception occured while processing the request" + " " + ex.getMessage());
 			throw new GenericException(ApplicationConstant.GENERAL_ERROR, 500);
 		}
+		validator.validateRequest(certificate, signature, request);
+		String paymentId = generatePaymentId();
+		response.setPaymentId(paymentId);
+		response.setStatus(ApplicationConstant.ACCEPTED);
+		responseOverview.setResponseSignature(generateSignature(response));
+		responseOverview.setCertificate(endodedCertificate);
+		responseOverview.setResponse(response);
+
 		return responseOverview;
 	}
 

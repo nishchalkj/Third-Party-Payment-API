@@ -64,6 +64,19 @@ public class PaymentInitiationControllerIntegrationTest {
 	}
 	
 	@Test
+	public void givenIncorrectCNCertificateRequest_WhenControllerIsCalled_ThenUnknownCertificateExceptionIsThrown() throws JsonParseException, JsonMappingException, IOException{
+		
+		HttpEntity<PaymentInitiationRequest> entity = prepareDataForIncorrectCNCertificate();
+		
+		ResponseEntity<PaymentInitiationResponse> response = restTemplate.exchange(
+				createURLWithPort("/v1.0.0/initiate-payment"),
+				HttpMethod.POST, entity, PaymentInitiationResponse.class);
+		
+		assertEquals("Rejected", response.getBody().getStatus());
+		
+	}
+	
+	@Test
 	public void givenInvalidSignatureRequest_WhenControllerIsCalled_ThenReturnsUnSuccessfulResponse() throws JsonParseException, JsonMappingException, IOException{
 		
 		HttpEntity<PaymentInitiationRequest> entity = prepareDataForInvalidSignature();
@@ -121,6 +134,22 @@ public class PaymentInitiationControllerIntegrationTest {
  		return entity;
  		
  	}
+     
+     private HttpEntity<PaymentInitiationRequest> prepareDataForIncorrectCNCertificate() throws JsonParseException, JsonMappingException, IOException{
+  		
+      	String certFilePath = "classpath:IncorrectCNnameCertificate.txt"; 
+      	String signFilePath = "classpath:ValidRequestSignature.txt"; 
+      	String encodedCertificate =  TestUtils.readCertificate(certFilePath);
+      	String encodedSignature = TestUtils.readSignature(signFilePath);
+  		final PaymentInitiationRequest request = mapper.readValue(TestUtils.readFile("test-valid-request.json"), PaymentInitiationRequest.class);
+  		headers.set("Signature-Certificate", encodedCertificate.trim());
+  		headers.set("Signature", encodedSignature.trim());
+  		headers.set("X-Request-Id", "29318e25-cebd-498c-888a-f77672f66449");
+  		headers.set("Content-Type", "application/json");
+  		HttpEntity<PaymentInitiationRequest> entity = new HttpEntity<>(request, headers);
+  		return entity;
+  		
+  	}
      
      private HttpEntity<PaymentInitiationRequest> prepareDataForInvalidSignature() throws JsonParseException, JsonMappingException, IOException{
   		
