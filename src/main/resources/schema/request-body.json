@@ -1,0 +1,7 @@
+{
+  "debtorIBAN": "string",
+  "creditorIBAN": "string",
+  "amount": "string",
+  "currency": "EUR",
+  "endToEndId": "string"
+}
