@@ -90,7 +90,7 @@ This application exposes below end point url
     {
     "status": "Rejected",
     "reason": "Invalid_Request",
-    "reasonCode": "500",
+    "reasonCode": "400",
     "timeStamp": "2021-04-16T01:03:02.342"
      }
                    

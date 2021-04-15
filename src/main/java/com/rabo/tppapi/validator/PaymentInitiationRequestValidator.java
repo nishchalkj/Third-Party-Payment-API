@@ -51,7 +51,7 @@ public class PaymentInitiationRequestValidator {
 
 		if (null == request || StringUtils.isBlank(request.getDebtorIBAN()) || !StringUtils.isAlphanumeric(request.getDebtorIBAN())
 				|| StringUtils.isBlank(request.getCreditorIBAN()) || !StringUtils.isAlphanumeric(request.getCreditorIBAN())) {
-			throw new InvalidRequestException(ApplicationConstant.INVALID_REQUEST, 500);
+			throw new InvalidRequestException(ApplicationConstant.INVALID_REQUEST, 400);
 		}
 		validateCertificate(cert);
 		validateSignature(cert, signature, request);

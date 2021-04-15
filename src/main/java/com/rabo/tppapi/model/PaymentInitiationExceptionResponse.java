@@ -2,6 +2,8 @@ package com.rabo.tppapi.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * DTO class for exception response
  * @author Nishchal
@@ -15,6 +17,7 @@ public class PaymentInitiationExceptionResponse {
 	
 	private String reasonCode;
 	
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime timeStamp;
 
 	/**
