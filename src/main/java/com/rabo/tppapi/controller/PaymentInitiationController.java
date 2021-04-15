@@ -3,6 +3,8 @@ package com.rabo.tppapi.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ public class PaymentInitiationController {
 	@Autowired
 	PaymentInitiationService tppAPIService;
 
+	private static final Logger log = LoggerFactory.getLogger(PaymentInitiationController.class);
 	/**
 	 * This method receives the httpServlet request and request Body for
 	 * processing
@@ -41,6 +44,7 @@ public class PaymentInitiationController {
 	@PostMapping(value = "/v1.0.0/initiate-payment")
 	public ResponseEntity<PaymentInitiationResponse> paymentInitiationRequest(HttpServletRequest servletRequest,
 			@Valid @RequestBody final PaymentInitiationRequest request) {
+		log.debug("Payment Intiation process started");
 		String signature = servletRequest.getHeader("Signature");
 		String certificate = servletRequest.getHeader("Signature-Certificate");
 		PaymentInitiationResponseOverview responseOverview = tppAPIService.validateRequest(certificate, signature,
