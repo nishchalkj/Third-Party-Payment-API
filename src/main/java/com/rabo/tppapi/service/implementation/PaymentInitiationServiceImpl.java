@@ -12,8 +12,6 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,8 @@ import com.rabo.tppapi.model.PaymentInitiationResponseOverview;
 import com.rabo.tppapi.service.PaymentInitiationService;
 import com.rabo.tppapi.validator.PaymentInitiationRequestValidator;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Service layer for the API
  * 
@@ -34,6 +34,7 @@ import com.rabo.tppapi.validator.PaymentInitiationRequestValidator;
  *
  */
 @Qualifier("tppAPIService")
+@Slf4j
 @Service
 public class PaymentInitiationServiceImpl implements PaymentInitiationService {
 
@@ -42,8 +43,6 @@ public class PaymentInitiationServiceImpl implements PaymentInitiationService {
 
 	@Autowired
 	PaymentInitiationResponse response;
-
-	private static final Logger log = LoggerFactory.getLogger(PaymentInitiationServiceImpl.class);
 
 	/**
 	 * This method validates and process the request
@@ -68,7 +67,7 @@ public class PaymentInitiationServiceImpl implements PaymentInitiationService {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(originalcert);
 			certificate = (X509Certificate) certFactory.generateCertificate(inputStream);
 		} catch (Exception ex) {
-			log.error("Exception occured while processing the request" + " " + ex.getMessage());
+			log.error("Exception occured while processing the request {}", ex.getMessage());
 			throw new GenericException(ApplicationConstant.GENERAL_ERROR, 500);
 		}
 		validator.validateRequest(certificate, signature, request);
@@ -116,7 +115,7 @@ public class PaymentInitiationServiceImpl implements PaymentInitiationService {
 			byte[] base64ByteArraySign = Base64.getEncoder().encode(digitalSignature);
 			encryptedSign = new String(base64ByteArraySign);
 		} catch (Exception ex) {
-			log.error("Exception occured while processing the request" + " " + ex.getMessage());
+			log.error("Exception occured while processing the request {}", ex.getMessage());
 			throw new GenericException(ApplicationConstant.GENERAL_ERROR, 500);
 		}
 		return encryptedSign;

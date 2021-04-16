@@ -13,8 +13,6 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.rabo.tppapi.constants.ApplicationConstant;
@@ -25,16 +23,17 @@ import com.rabo.tppapi.exception.LimitExceededException;
 import com.rabo.tppapi.exception.UnknownCertificateException;
 import com.rabo.tppapi.model.PaymentInitiationRequest;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Validator class for the API
  * 
  * @author Nishchal
  *
  */
+@Slf4j
 @Component
 public class PaymentInitiationRequestValidator {
-
-	private static final Logger log = LoggerFactory.getLogger(PaymentInitiationRequestValidator.class);
 
 	/**
 	 * This method validates the input values
@@ -49,8 +48,10 @@ public class PaymentInitiationRequestValidator {
 	 */
 	public void validateRequest(X509Certificate cert, String signature, PaymentInitiationRequest request) {
 
-		if (null == request || StringUtils.isBlank(request.getDebtorIBAN()) || !StringUtils.isAlphanumeric(request.getDebtorIBAN())
-				|| StringUtils.isBlank(request.getCreditorIBAN()) || !StringUtils.isAlphanumeric(request.getCreditorIBAN())) {
+		if (null == request || StringUtils.isBlank(request.getDebtorIBAN())
+				|| !StringUtils.isAlphanumeric(request.getDebtorIBAN())
+				|| StringUtils.isBlank(request.getCreditorIBAN())
+				|| !StringUtils.isAlphanumeric(request.getCreditorIBAN())) {
 			throw new InvalidRequestException(ApplicationConstant.INVALID_REQUEST, 400);
 		}
 		validateCertificate(cert);
@@ -73,7 +74,7 @@ public class PaymentInitiationRequestValidator {
 			RDN cn = x500name.getRDNs(BCStyle.CN)[0];
 			commonName = IETFUtils.valueToString(cn.getFirst().getValue());
 		} catch (Exception ex) {
-			log.error("Exception occured while validating the certificate" + " " + ex.getMessage());
+			log.error("Exception occured while validating the certificate{}", ex.getMessage());
 			throw new GenericException(ApplicationConstant.GENERAL_ERROR, 500);
 		}
 		if (!ApplicationConstant.COMMON_NAME.equals(commonName)) {
@@ -103,7 +104,7 @@ public class PaymentInitiationRequestValidator {
 			byte[] originalSigBytes = Base64.getDecoder().decode(requestSignature.getBytes());
 			result = signature.verify(originalSigBytes);
 		} catch (Exception ex) {
-			log.error("Exception occured while validating the signature" + " " + ex.getMessage());
+			log.error("Exception occured while validating the signature{}", ex.getMessage());
 			throw new GenericException(ApplicationConstant.GENERAL_ERROR, 500);
 		}
 		if (!result) {
