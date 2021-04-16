@@ -43,7 +43,7 @@ public class PaymentInitiationServiceImpl implements PaymentInitiationService {
 	@Autowired
 	PaymentInitiationResponse response;
 
-	private static final Logger log = LoggerFactory.getLogger(PaymentInitiationRequestValidator.class);
+	private static final Logger log = LoggerFactory.getLogger(PaymentInitiationServiceImpl.class);
 
 	/**
 	 * This method validates and process the request

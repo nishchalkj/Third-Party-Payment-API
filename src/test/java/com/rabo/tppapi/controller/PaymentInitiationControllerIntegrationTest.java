@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabo.tppapi.TppapiApplication;
 import com.rabo.tppapi.model.PaymentInitiationRequest;
 import com.rabo.tppapi.model.PaymentInitiationResponse;
-import com.rabo.tppapi.testutils.TestUtils;
+import com.rabo.tppapi.testutil.TestUtils;
 
 
 @RunWith(SpringRunner.class)

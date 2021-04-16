@@ -22,7 +22,7 @@ import com.rabo.tppapi.exception.InvalidSignatureException;
 import com.rabo.tppapi.exception.LimitExceededException;
 import com.rabo.tppapi.exception.UnknownCertificateException;
 import com.rabo.tppapi.model.PaymentInitiationRequest;
-import com.rabo.tppapi.testutils.TestUtils;
+import com.rabo.tppapi.testutil.TestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)

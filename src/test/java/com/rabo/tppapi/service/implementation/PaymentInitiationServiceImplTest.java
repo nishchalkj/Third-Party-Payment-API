@@ -19,7 +19,7 @@ import com.rabo.tppapi.exception.GenericException;
 import com.rabo.tppapi.model.PaymentInitiationRequest;
 import com.rabo.tppapi.model.PaymentInitiationResponse;
 import com.rabo.tppapi.model.PaymentInitiationResponseOverview;
-import com.rabo.tppapi.testutils.TestUtils;
+import com.rabo.tppapi.testutil.TestUtils;
 import com.rabo.tppapi.validator.PaymentInitiationRequestValidator;
 
 @RunWith(MockitoJUnitRunner.class)
